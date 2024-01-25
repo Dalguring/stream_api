@@ -112,6 +112,9 @@ public class StreamTest {
                 .flatMap(Collection::stream).toList());
     }
 
+    /**
+     * stream().toSet() | toList() | toMap() ... => stream을 통한 작업이 끝난 후
+     */
     @Test
     void collect_unique_ids() {
         Set<Long> uniqueIds =
@@ -121,4 +124,19 @@ public class StreamTest {
 
         assertThat(uniqueIds).isEqualTo(Set.of(1L, 2L, 3L, 4L, 5L, 6L, 7L));
     }
+
+    /**
+     * stream().sorted() => 스트림의 각 요소에 대해 정렬을 진행
+     */
+    @Test
+    void sort_users_with_level_desc() {
+        List<Optional<String>> orderedUsers =
+                users.stream()
+                        .sorted(Comparator.comparingInt(User::getLevel).reversed())
+                        .map(this::createFullName)
+                        .toList();
+
+        orderedUsers.stream().forEach(result -> System.out.println(result.get()));
+    }
+
 }
