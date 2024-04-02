@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.*;
 
 
-public class StreamTest {
+public class UserStreamTest {
     private static List<User> users;
 
     @BeforeAll
