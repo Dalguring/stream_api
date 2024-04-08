@@ -178,4 +178,27 @@ public class EmployeeStreamTest {
 
         System.out.println(youngestEmp);
     }
+
+    /**
+     * Collectors.partitioningBy() => 스트림의 요소를 지정한 조건에 일치하는 그룹과 일치하지 않는 그룹, 두 가지로 분할
+     * 매개변수 : Predicate, 리턴 : Map<Boolean, List<E>>
+     */
+    @Test
+    @DisplayName("30세 이상의 직원과 30세 이하의 직원")
+    void employee_whose_age_greater_than_30_and_less_than_30() {
+        Map<Boolean, List<Employee>> partitionEmployeesByAge;
+
+        partitionEmployeesByAge = empList.stream()
+                .collect(Collectors.partitioningBy(e -> e.getAge() > 30));
+
+        for (Map.Entry<Boolean, List<Employee>> entry : partitionEmployeesByAge.entrySet()) {
+            if (entry.getKey()) {
+                System.out.println("30세보다 나이가 많은 직원");
+                System.out.println(entry.getValue());
+            } else {
+                System.out.println("30세보다 나이가 작거나 같은 직원");
+                System.out.println(entry.getValue());
+            }
+        }
+    }
 }
