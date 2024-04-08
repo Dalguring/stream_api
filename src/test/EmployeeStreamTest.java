@@ -3,9 +3,7 @@ package test;
 import main.Employee;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,6 +56,7 @@ public class EmployeeStreamTest {
 
         empByCity = empList.stream()
                 .collect(Collectors.groupingBy(Employee::getCity));
+
         System.out.println(empByCity);
     }
 
@@ -96,5 +95,87 @@ public class EmployeeStreamTest {
                         Collectors.counting()));
 
         System.out.println(empCountBySex);
+    }
+
+    @Test
+    @DisplayName("조직 내 모든 부서 명")
+    void all_departments_name_in_organization() {
+        empList.stream()
+                .map(Employee::getDeptName)
+                .distinct()
+                .forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("특정 나이 이상 사원 정보")
+    void certain_age_employee_details() {
+        int age = 28;
+
+        empList.stream()
+                .filter(emp -> emp.getAge() >= age)
+                .toList()
+                .forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("가장 나이가 많은 사원의 나이")
+    void maximum_age_of_employee() {
+        OptionalInt max = empList.stream()
+                .mapToInt(Employee::getAge)
+                .max();
+
+        if (max.isPresent()) {
+            System.out.println(max.getAsInt());
+        }
+    }
+
+    @Test
+    @DisplayName("성별에 따른 평균 나이")
+    void average_age_grouped_by_gender() {
+        Map<String, Double> avgAge;
+
+        avgAge = empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getGender,
+                        Collectors.averagingInt(Employee::getAge)
+                ));
+
+        System.out.println(avgAge);
+    }
+
+    @Test
+    @DisplayName("부서별 사원 수")
+    void number_of_employees_in_each_department() {
+        Map<String, Long> countByDept;
+
+        countByDept = empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName
+                        , Collectors.counting()
+                ));
+
+        System.out.println(countByDept);
+    }
+
+    @Test
+    @DisplayName("가장 나이가 많은 사원의 사원 정보")
+    void oldest_employee_details() {
+        Optional<Employee> oldestEmp;
+
+        oldestEmp = empList.stream()
+                .max(Comparator.comparingInt(Employee::getAge));
+
+        System.out.println(oldestEmp.get());
+    }
+
+    @Test
+    @DisplayName("가장 어린 여자 사원 정보")
+    void youngest_femal_employee() {
+        Optional<Employee> youngestEmp;
+        youngestEmp = empList.stream()
+                .filter(e -> e.getGender().equals("F"))
+                .min(Comparator.comparingInt(Employee::getAge));
+
+        System.out.println(youngestEmp);
     }
 }
