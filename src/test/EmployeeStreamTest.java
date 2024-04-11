@@ -5,10 +5,9 @@ import org.junit.jupiter.api.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EmployeeStreamTest {
-    private static List<Employee> empList = new ArrayList<>();
+    private static final List<Employee> empList = new ArrayList<>();
 
     @BeforeAll
     public static void fillEmployees() {
@@ -200,5 +199,65 @@ public class EmployeeStreamTest {
                 System.out.println(entry.getValue());
             }
         }
+    }
+
+    @Test
+    @DisplayName("가장 사원이 많은 부서의 부서명")
+    void max_number_of_employees_present_in_department() {
+        Map.Entry<String, Long> maxNoOfEmployeesInDept;
+
+        maxNoOfEmployeesInDept = empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName,
+                        Collectors.counting()
+                ))// return Type = Map<String, Long>()
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .get();
+
+        System.out.println(maxNoOfEmployeesInDept.getKey());
+    }
+
+    @Test
+    @DisplayName("HR부서 내 사원 유무")
+    void any_employee_in_HR_dept() {
+        Optional<Employee> employee = empList.stream()
+                .filter(e -> e.getDeptName().equalsIgnoreCase("HR")) // equalsIgnoreCase : 대소문자 구분 x, equals : 대소문자 구분 o
+                .findAny();
+
+        employee.ifPresent(System.out::println);
+    }
+
+    @Test
+    @DisplayName("사원 수가 3명 이상인 부서명")
+    void dept_names_where_employees_over_3() {
+        empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName
+                        , Collectors.counting()
+                ))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 3)
+                .forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("서로 다른 부서명")
+    void distinct_dept_names() {
+        empList.stream()
+                .map(Employee::getDeptName)
+                .distinct()
+                .forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("부산에 사는 사원의 정보")
+    void employees_who_lives_in_Busan() {
+        empList.stream()
+                .filter(e -> e.getCity().equalsIgnoreCase("부산"))
+                .sorted(Comparator.comparing(Employee::getName))
+                .forEach(e -> System.out.println(e.getName()));
     }
 }
