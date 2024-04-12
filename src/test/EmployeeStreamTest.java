@@ -260,4 +260,35 @@ public class EmployeeStreamTest {
                 .sorted(Comparator.comparing(Employee::getName))
                 .forEach(e -> System.out.println(e.getName()));
     }
+
+    @Test
+    @DisplayName("사내 사원의 수")
+    void no_of_employee_in_the_dept() {
+        long cnt = empList.stream()
+                .count();
+
+        System.out.println(cnt);
+    }
+
+    @Test
+    @DisplayName("이름과 나이순으로 사원 정보 정렬")
+    void sorting_based_on_name_and_age() {
+        empList.stream()
+                .sorted(Comparator.comparing(Employee::getName)
+                        .thenComparing(Employee::getAge))
+                .forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("경력이 가장 오래된 사원")
+    void highest_experienced_employee() {
+        Optional<Employee> employee;
+        employee = empList.stream()
+                .sorted(Comparator.comparingInt(Employee::getYearOfJoining))
+                //.reversed()) => 가장 경력이 짧은 사원
+                .findFirst();
+
+        System.out.println(employee);
+    }
+
 }
