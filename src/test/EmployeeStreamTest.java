@@ -6,6 +6,10 @@ import org.junit.jupiter.api.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Stream API 실습
+ * < 참고 : https://medium.com/@veenaraofr/java8-stream-api-commonly-asked-questions-about-employee-highest-salary-99c21cec4d98 >
+ */
 public class EmployeeStreamTest {
     private static final List<Employee> empList = new ArrayList<>();
 
@@ -239,7 +243,7 @@ public class EmployeeStreamTest {
                 ))
                 .entrySet()
                 .stream()
-                .filter(e -> e.getValue() > 3)
+                .filter(e -> e.getValue() >= 3)
                 .forEach(System.out::println);
     }
 
@@ -291,4 +295,24 @@ public class EmployeeStreamTest {
         System.out.println(employee);
     }
 
+    @Test
+    @DisplayName("평균 연봉과 총 연봉")
+    void average_and_total_salary() {
+        DoubleSummaryStatistics empSal = empList.stream()
+                .collect(Collectors.summarizingDouble(Employee::getSalary));
+
+        System.out.println(empSal);
+        System.out.println(empSal.getAverage());
+        System.out.println(empSal.getSum());
+    }
+
+    @Test
+    @DisplayName("부서별 평균 연봉")
+    void average_salary_of_each_department() {
+        empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName
+                        , Collectors.summarizingDouble(Employee::getSalary)))
+                .forEach((key, value) -> System.out.println(key + " : " + value.getAverage()));
+    }
 }
