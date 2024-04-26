@@ -315,4 +315,41 @@ public class EmployeeStreamTest {
                         , Collectors.summarizingDouble(Employee::getSalary)))
                 .forEach((key, value) -> System.out.println(key + " : " + value.getAverage()));
     }
+
+    @Test
+    @DisplayName("최고 연봉자")
+    void highest_salary_in_organization() {
+        Optional<Employee> emp = empList.stream()
+                .max(Comparator.comparingLong(Employee::getSalary));
+
+        emp.ifPresent(employee -> System.out.println(employee.getSalary()));
+
+        emp = empList.stream()
+                .sorted(Comparator.comparingLong(Employee::getSalary).reversed())
+                .findFirst();
+
+        System.out.println(emp.get().getSalary());
+    }
+
+    @Test
+    @DisplayName("조직 내 두 번째로 연봉이 많은 사람")
+    void second_highest_salary_in_organization() {
+        Optional<Employee> emp2 = empList.stream()
+                .sorted(Comparator.comparingLong(Employee::getSalary).reversed())
+                .skip(1)
+                .findFirst();
+
+        emp2.ifPresent(System.out::println);
+    }
+
+    @Test
+    @DisplayName("성별별 최고 연봉자")
+    void highest_salary_based_on_gender() {
+        Map<String, Optional<Employee>> highestPaidMFEmployee = empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getGender
+                        , Collectors.maxBy((t1, t2) -> (int) (t1.getSalary() - t2.getSalary()))));
+
+        System.out.println(highestPaidMFEmployee);
+    }
 }
