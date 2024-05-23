@@ -42,6 +42,9 @@ public class EmployeeStreamTest {
      * - stream 요소들의 그룹화와 분할
      *
      * Collectors.toList() => 모든 Stream의 요소를 List 인스턴스로 수집하는데 사용할 수 있음.
+     * Collections와 Collectors의 차이 ?
+     * -> Collections 는 java.util 패키지에 속하는 클래스로 컬렉션 프레임워크(List, Map, Set) 등 컬렉션 객체들을 다루기 위한 정적 메서드를 제공함
+     * -> Collectors는 java.util.stream 패키지에 속하는 클래스로 스트림 API를 사용하여 컬렉션을 변환, 요약, 그룹화 하는 등의 종단 연산을 처리할 수 있는 메서드를 제공함.
      *
      * Collectors.groupingBy()
      * -> Collectors의 groupingBy() 또는 groupingByConcurrent() 가 리턴하는 Collector을 매개값으로 대입하여 사용 가능
@@ -244,7 +247,7 @@ public class EmployeeStreamTest {
                 .entrySet()
                 .stream()
                 .filter(e -> e.getValue() >= 3)
-                .forEach(System.out::println);
+                .forEach(dept -> System.out.println(dept.getKey()));
     }
 
     @Test
@@ -352,4 +355,20 @@ public class EmployeeStreamTest {
 
         System.out.println(highestPaidMFEmployee);
     }
+
+    @Test
+    @DisplayName("부서별 최저 연봉자")
+    void lowest_salary_in_each_depart() {
+        empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName
+                        , Collectors.minBy((t1, t2) -> (int) (t1.getSalary() - t2.getSalary()))
+                ))
+                .entrySet()
+                .stream()
+                .forEach(e -> System.out.println(e.getKey() + " : " + e.getValue()));
+
+    }
+
+
 }
