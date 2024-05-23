@@ -370,5 +370,36 @@ public class EmployeeStreamTest {
 
     }
 
+    @Test
+    @DisplayName("사내 연봉 오름차순, 내림차순")
+    void employees_salary_sorted_by_ascending() {
+        System.out.println("오름차순");
+        empList.stream()
+                .sorted(Comparator.comparingLong(Employee::getSalary))
+                .forEach(System.out::println);
 
+        System.out.println("내림차순");
+        empList.stream()
+                .sorted(Comparator.comparingLong(Employee::getSalary).reversed())
+                .forEach(System.out::println);
+
+    }
+
+    @Test
+    @DisplayName("부서별 두 번째 최고 연봉자(collectingAndThen)")
+    void second_highest_salary_employee() {
+        Map<String, Optional<Employee>> emp = empList.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDeptName,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .sorted(Comparator.comparingLong(Employee::getSalary).reversed())
+                                        .skip(1)
+                                        .findFirst()
+                        )
+                ));
+
+        System.out.println(emp);
+    }
 }
